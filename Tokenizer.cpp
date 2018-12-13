@@ -1,6 +1,59 @@
 #include "Tokenizer.h"
 //#include <regex>
 
+
+std::string t_keywords[34] = {
+        "select",
+        "from",
+        "where",
+        "avg",
+        "sum",
+        "min",
+        "max",
+        "load",
+        "drop",
+        "order",
+        "by",
+        "group",
+        "into",
+        "outfile",
+        "as",
+        "having",
+        "data",
+        "infile",
+        "table",
+        "ignore",
+        "lines",
+        "null",
+        "int",
+        "float",
+        "varchar",
+        "timestamp",
+        "desc",
+        "asc",
+        "and",
+        "or",
+        "not",
+        "create",
+        "if",
+        "exists",
+    };
+
+std::string t_operators[11] = {
+        ",",
+        "(",
+        ")",
+        "<",
+        "<=",
+        "<>",
+        "=",
+        ">=",
+        ">",
+        ";",
+        "*",
+};
+
+
 bool is_in_str_array(std::string* a, size_t size, std::string& s){
     for(size_t i=0; i<size; i++){
         if(a[i] == s)
@@ -30,7 +83,7 @@ std::pair<char, std::string> Tokenizer::NextToken(){
     __skip_wspace();
     // token checking
     if(__eof()){
-        return {EOF, ""};
+        return {t_EOF, ""};
     }
 
     if(is_alphabetic_or_underscore(_cur())){
@@ -44,10 +97,10 @@ std::pair<char, std::string> Tokenizer::NextToken(){
     if( is_digit_or_dot_or_pm(_cur()) ){
         return _get_lit_num();
     }
-    /* if we got here, it means that our current token is not
-       an end-of-file, keyword, identifier, or literal
-       so it must be an operator (or an error)
-    */
+    // if we got here, it means that our current token is not
+    // an end-of-file, keyword, identifier, or literal
+    // so it must be an operator (or an error)
+    
     return _get_operator();
     
    
@@ -61,7 +114,7 @@ std::pair<char, std::string> Tokenizer::_get_identifier_or_keyword(){
         token_val.push_back(_cur());
         _curser ++;
     }
-    if(is_in_str_array(_keywords,34 ,token_val))
+    if(is_in_str_array(t_keywords,34 ,token_val))
         return {t_KEYWORD, token_val};
     return {t_IDENTIFIER, token_val};
 }
@@ -116,7 +169,7 @@ std::pair<char, std::string> Tokenizer::_get_lit_num(){
 std::pair<char, std::string> Tokenizer::_get_operator(){
     std::string token_val(1, _cur());
     _curser ++;
-    if(is_in_str_array(_operators, 11, token_val)){
+    if(is_in_str_array(t_operators, 11, token_val)){
         return {t_OPERATOR, token_val};
     }
     if(_text_len = (_curser+1)){//file ends on next char, meaning theres no place for a second operator char
@@ -125,7 +178,7 @@ std::pair<char, std::string> Tokenizer::_get_operator(){
     //now we know that there IS one more char, and the combination could
     token_val.push_back(_cur());
     _curser ++;
-    if(is_in_str_array(_operators, 11, token_val)){
+    if(is_in_str_array(t_operators, 11, token_val)){
         return {t_OPERATOR, token_val};
     }
     // we ran out of options... 

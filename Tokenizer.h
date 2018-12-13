@@ -2,71 +2,20 @@
 #define TOKENIZER_H
 
 #include <string>
+
 #include <utility>
 
-#define t_ERROR      -1
-#define t_EOF 	    0
-#define t_KEYWORD 	1
-#define t_IDENTIFIER 	2
-#define t_LIT_STR 	3
-#define t_LIT_NUM 	4
-#define t_OPERATOR 	5
+#define t_ERROR        -1
+#define t_EOF           0
+#define t_KEYWORD 	    1
+#define t_IDENTIFIER    2
+#define t_LIT_STR   	3
+#define t_LIT_NUM 	    4
+#define t_OPERATOR 	    5
 
 bool is_in_str_array(std::string* a,size_t size, std::string& s);
 bool is_alphabetic_or_underscore(char x);
 bool is_digit_or_dot_or_pm(char x);
-
-
-std::string _keywords[34] = {
-        "select",
-        "from",
-        "where",
-        "avg",
-        "sum",
-        "min",
-        "max",
-        "load",
-        "drop",
-        "order",
-        "by",
-        "group",
-        "into",
-        "outfile",
-        "as",
-        "having",
-        "data",
-        "infile",
-        "table",
-        "ignore",
-        "lines",
-        "null",
-        "int",
-        "float",
-        "varchar",
-        "timestamp",
-        "desc",
-        "asc",
-        "and",
-        "or",
-        "not",
-        "create",
-        "if",
-        "exists",
-    };
-
-std::string _operators[11] = {
-        ",",
-        "(",
-        ")",
-        "<",
-        "<=",
-        "<>",
-        "=",
-        ">=",
-        ">",
-        ";",
-        "*",
-};
 
 
 
@@ -79,6 +28,7 @@ private:
     size_t _cur_line_start_index;
     size_t _line_number;
     */
+    
 
     inline char _cur(){return _text[_curser];};
     std::pair<char, std::string> _get_identifier_or_keyword();
