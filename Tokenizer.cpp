@@ -1,4 +1,6 @@
 #include "Tokenizer.h"
+#include <algorithm> //used for lowercasing
+#include <iostream>
 //#include <regex>
 
 
@@ -54,25 +56,6 @@ std::string t_operators[11] = {
 };
 
 
-bool is_in_str_array(std::string* a, size_t size, std::string& s){
-    for(size_t i=0; i<size; i++){
-        if(a[i] == s)
-            return true;
-    }
-    return false;
-}
-bool is_alphabetic_or_underscore(char x){
-    if(isalpha(x) || x==*"_")
-        return true;
-    return false;
-}
-bool is_digit_or_dot_or_pm(char x){
-    if(isdigit(x) || x==*"." || x==*"+" || x==*"-")
-        return true;
-    return false;
-}
-
-
 Tokenizer::Tokenizer(std::string& text): _text_len(text.size()), _text(text){}
 
 std::pair<char, std::string> Tokenizer::NextToken(){
@@ -86,7 +69,7 @@ std::pair<char, std::string> Tokenizer::NextToken(){
         return {t_EOF, ""};
     }
 
-    if(is_alphabetic_or_underscore(_cur())){
+    if(utils::is_alphabetic_or_underscore(_cur())){
         return _get_identifier_or_keyword();
     }
 
@@ -94,7 +77,7 @@ std::pair<char, std::string> Tokenizer::NextToken(){
         return _get_lit_str();
     }
 
-    if( is_digit_or_dot_or_pm(_cur()) ){
+    if( utils::is_digit_or_dot_or_pm(_cur()) ){
         return _get_lit_num();
     }
     // if we got here, it means that our current token is not
@@ -110,12 +93,15 @@ std::pair<char, std::string> Tokenizer::NextToken(){
 // returns the identifier or keyword in current text position
 std::pair<char, std::string> Tokenizer::_get_identifier_or_keyword(){
     std::string token_val;
-    while( !__eof() && ( is_alphabetic_or_underscore(_cur()) || isdigit(_cur()) ) ){
+    while( !__eof() && ( utils::is_alphabetic_or_underscore(_cur()) || isdigit(_cur()) ) ){
         token_val.push_back(_cur());
         _curser ++;
     }
-    if(is_in_str_array(t_keywords,34 ,token_val))
-        return {t_KEYWORD, token_val};
+    std::string token_val_lower = token_val;
+    std::transform(token_val_lower.begin(), token_val_lower.end(), token_val_lower.begin(), ::tolower);
+    //std::cout << "lower: "<<token_val_lower << ", normal: " << token_val <<"\n";
+    if(utils::is_in_str_array(t_keywords, 34, token_val_lower))
+        return {t_KEYWORD, token_val_lower};
     return {t_IDENTIFIER, token_val};
 }
 
@@ -142,7 +128,7 @@ std::pair<char, std::string> Tokenizer::_get_lit_str(){
 std::pair<char, std::string> Tokenizer::_get_lit_num(){
     size_t start_pos = _curser; //used for error printing
     std::string token_val;
-    if(!is_digit_or_dot_or_pm(_cur()))
+    if(!utils::is_digit_or_dot_or_pm(_cur()))
         return {t_ERROR, "_get_lit_num was called, but the \"number\" didnt start with digit,.,+,- in the _cur"};
     bool is_dotted = false;
     while(!__eof()){
@@ -169,7 +155,7 @@ std::pair<char, std::string> Tokenizer::_get_lit_num(){
 std::pair<char, std::string> Tokenizer::_get_operator(){
     std::string token_val(1, _cur());
     _curser ++;
-    if(is_in_str_array(t_operators, 11, token_val)){
+    if(utils::is_in_str_array(t_operators, 11, token_val)){
         return {t_OPERATOR, token_val};
     }
     if(_text_len = (_curser+1)){//file ends on next char, meaning theres no place for a second operator char
@@ -178,7 +164,7 @@ std::pair<char, std::string> Tokenizer::_get_operator(){
     //now we know that there IS one more char, and the combination could
     token_val.push_back(_cur());
     _curser ++;
-    if(is_in_str_array(t_operators, 11, token_val)){
+    if(utils::is_in_str_array(t_operators, 11, token_val)){
         return {t_OPERATOR, token_val};
     }
     // we ran out of options... 

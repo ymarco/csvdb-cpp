@@ -1,5 +1,7 @@
 //#include "Parser.h"
 #include "Tokenizer.h"
+#include "Commands/Create.h" //only for testing
+#include <utility> // temp
 #include <string>
 #include <iostream>
 
@@ -27,7 +29,12 @@ std::string get_usr_cmd(){
 
 int main(){
     std::cout << "hello world\n";
-    
+    std::string name("movies");
+    std::pair<char,std::string> args[] = {{1, "id"}, {3, "title"}};
+    Create create(name, true, args, 2);
+    //create.execute();
+
+    /*
     std::string cmd;
     while(1){
         cmd = get_usr_cmd();
@@ -39,5 +46,5 @@ int main(){
                 break;
             }
         }
-    }
+    }*/
 }
