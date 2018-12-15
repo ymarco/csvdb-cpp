@@ -4,3 +4,4 @@
 *.exe
 .directory
 /csvdb/.vs/csvdb/v15
+/csvdb
