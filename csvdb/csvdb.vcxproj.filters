@@ -29,7 +29,7 @@
     <ClCompile Include="..\Tokenizer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\TreeNode.cpp">
+    <ClCompile Include="Drop.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -121,7 +121,7 @@
     <ClCompile Include="..\main.cpp" />
     <ClCompile Include="..\Parser.cpp" />
     <ClCompile Include="..\Tokenizer.cpp" />
-    <ClCompile Include="..\TreeNode.cpp" />
+    <ClCompile Include="Drop.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Parser.h" />
