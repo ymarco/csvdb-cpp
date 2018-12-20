@@ -2,25 +2,38 @@
 #define TOKENIZER_H
 
 #include <string>
-
 #include <utility>
 #include "utils.h"
+#include <vector>
+#include <exception>
+
+class ParseException : public std::exception {
+private:
+    std::string _msg;
+public:
+    ParseException(std::string msg);
+    const char * what () const throw ();
+};
+
+
+
+
 
 class Tokenizer{
 private:
     std::string _text;
     size_t _text_len; 
-    size_t _curser; // index to _text
-    /* implement later:
-    size_t _cur_line_start_index;
-    size_t _line_number;
-    */
-    
+    size_t _curser = 0; // index to _text
+    size_t _row = 0;
+    size_t _column = 0;
+    std::vector<std::string> __text_split_by_lines;
 
-    inline char _cur(){return _text[_curser];};
+    char _cur();
+    void _proceed_cur();
+    std::string _err_info();
     std::pair<char, std::string> _get_identifier_or_keyword();
     std::pair<char, std::string> _get_lit_str();
-    std::pair<char, std::string> _get_lit_num(); // note that this returns a string containing the num
+    std::pair<char, std::string> _get_lit_num(); // note that this returns a STRING containing the num
     std::pair<char, std::string> _get_operator();
     void __skip_wspace();
     void __skip_comment();
@@ -29,9 +42,9 @@ private:
 
 
 public:
-    Tokenizer(std::string& text);
+    Tokenizer(std::string text);
     std::pair<char, std::string> NextToken(); //returns token kind, token value
-
+    void throw_err(std::string msg);
 };
 
 #endif

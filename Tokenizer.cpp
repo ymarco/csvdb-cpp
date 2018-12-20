@@ -1,5 +1,6 @@
 #include "Tokenizer.h"
 #include <algorithm> //used for lowercasing
+#include <sstream>
 #include <iostream>
 //#include <regex>
 
@@ -55,8 +56,18 @@ std::string t_operators[11] = {
         "*",
 };
 
+char Tokenizer::_cur(){
+    return _text[_curser];
+    }
 
-Tokenizer::Tokenizer(std::string& text): _text_len(text.size()), _text(text){}
+Tokenizer::Tokenizer(std::string text)
+: _text_len(text.size()), _text(text){
+    std::stringstream st_text(_text);
+    std::string segment;
+    while(std::getline(st_text, segment)){
+        __text_split_by_lines.push_back(segment);
+    }
+}
 
 std::pair<char, std::string> Tokenizer::NextToken(){
     std::string token_val;
@@ -84,10 +95,7 @@ std::pair<char, std::string> Tokenizer::NextToken(){
     // an end-of-file, keyword, identifier, or literal
     // so it must be an operator (or an error)
     
-    return _get_operator();
-    
-   
-     
+    return _get_operator();    
 }
 
 // returns the identifier or keyword in current text position
@@ -95,7 +103,7 @@ std::pair<char, std::string> Tokenizer::_get_identifier_or_keyword(){
     std::string token_val;
     while( !__eof() && ( utils::is_alphabetic_or_underscore(_cur()) || isdigit(_cur()) ) ){
         token_val.push_back(_cur());
-        _curser ++;
+        _proceed_cur();
     }
     std::string token_val_lower = token_val;
     std::transform(token_val_lower.begin(), token_val_lower.end(), token_val_lower.begin(), ::tolower);
@@ -106,37 +114,34 @@ std::pair<char, std::string> Tokenizer::_get_identifier_or_keyword(){
 }
 
 std::pair<char, std::string> Tokenizer::_get_lit_str(){
-    size_t start_pos = _curser; //used for error printing
     std::string token_val;
     if(_cur()!=*"\"")
-        return {t_ERROR, "_get_lit_str was called, but there wasnt a \" in the _cur"};
-    _curser ++; // now we are inside the str lit
+       throw_err("Tokenizer: _get_lit_str was called, but there wasnt a \" in the _cur");
+    _proceed_cur(); // now we are inside the str lit
     while(!__eof()){
         if(_cur()==*"\""){ // found the closing "
-            _curser ++; // going past the " and exiting the str lit
+            _proceed_cur(); // going past the " and exiting the str lit
             return {t_LIT_STR, token_val};
         }
         token_val.push_back(_cur());
-        _curser ++;
+        _proceed_cur();
     }
     //if we got here it means that we reached eof without finding the closing "
-    std::string err_msg = "did not find the closing \" that was opened in char #";
-    err_msg += start_pos;
-    return {t_ERROR, err_msg};
+    throw_err("Tokenizer: did not find the closing \"");
 }
 
 std::pair<char, std::string> Tokenizer::_get_lit_num(){
     size_t start_pos = _curser; //used for error printing
     std::string token_val;
     if(!utils::is_digit_or_dot_or_pm(_cur()))
-        return {t_ERROR, "_get_lit_num was called, but the \"number\" didnt start with digit,.,+,- in the _cur"};
+       throw_err("Tokenizer: _get_lit_num was called, but the \"number\" didnt start with digit,.,+,- in the _cur");
     bool is_dotted = false;
     while(!__eof()){
         if( isdigit(_cur()) ){
             token_val.push_back(_cur());
         }else if(_cur() == *"."){
             if(is_dotted){              
-                return {t_ERROR, "_get_lit_num found 2 dots without exponent"};
+               throw_err("Tokenizer: _get_lit_num found 2 dots without exponent");
             }else{
                 is_dotted = true;
                 token_val.push_back(_cur());
@@ -144,9 +149,9 @@ std::pair<char, std::string> Tokenizer::_get_lit_num(){
         }else if(isspace(_cur())){ // end of number
             return {t_LIT_NUM, token_val};
         }else{
-            return {t_ERROR, "a thing started with a number and than changed into somethng else invalid"};
+           throw_err("Tokenizer: a thing started with a number and than changed into somethng else invalid");
         }
-        _curser ++;
+        _proceed_cur();
     }
     // if we got here it means we reached eof and the numbe hasnt ended
     return {t_LIT_NUM, token_val};
@@ -154,26 +159,39 @@ std::pair<char, std::string> Tokenizer::_get_lit_num(){
 
 std::pair<char, std::string> Tokenizer::_get_operator(){
     std::string token_val(1, _cur());
-    _curser ++;
+    _proceed_cur();
     if(utils::is_in_str_array(t_operators, 11, token_val)){
         return {t_OPERATOR, token_val};
     }
     if(_text_len = (_curser+1)){//file ends on next char, meaning theres no place for a second operator char
-        return {t_ERROR, "type not found"};
+       throw_err("Tokenizer: type not found");
     }
     //now we know that there IS one more char, and the combination could
     token_val.push_back(_cur());
-    _curser ++;
+    _proceed_cur();
     if(utils::is_in_str_array(t_operators, 11, token_val)){
         return {t_OPERATOR, token_val};
     }
     // we ran out of options... 
-    return {t_ERROR, "type not found"};
+   throw_err("Tokenizer: type not found");
+}
+
+
+void Tokenizer::_proceed_cur(){
+    if(_cur()==*"\n"){
+        _row++;
+        _column = 0;
+    }else{
+        _column ++;
+    }
+    _curser++;
+    //std::cout << "_row: " << _row << ", _column: " << _column << std::endl;
+
 }
 
 void Tokenizer::__skip_wspace(){
     while(!__eof() && isspace(_cur())){
-        _curser++;
+        _proceed_cur();
     };
 }
 
@@ -190,10 +208,10 @@ void Tokenizer::__skip_comment(){
 void Tokenizer::__skip_till_eol(){
     while(!(__eof())){
         if(_cur() == *"\n"){
-            _curser ++; // going past the \n
+            _proceed_cur(); // going past the \n
             return;
         }
-        _curser ++;
+        _proceed_cur();
     }
 
 }
@@ -202,4 +220,26 @@ bool Tokenizer::__eof(){
     if(_text_len == _curser)
         return true;
     return false;
+}
+
+void Tokenizer::throw_err(std::string msg){
+    //std::cout << "throw_err: column is " << _column << "\n";
+    std::string info_and_msg = _err_info() + msg + "\n";
+    throw ParseException(info_and_msg);
+}
+
+std::string Tokenizer::_err_info(){
+    std::string res(__text_split_by_lines[_row]);
+    std::string spaces_indent(_column-1, *"_");
+    //std::cout << spaces_indent << " <these were spaces indent\n";
+    std::string indent = spaces_indent + "^^^";
+    //std::cout << "coluns: "<< _column << "\n";
+    res += "\n" + indent + "\n";
+    return res;
+}
+
+ParseException::ParseException(std::string msg): _msg(msg){}
+
+const char* ParseException::what() const throw() {
+    return _msg.c_str();
 }

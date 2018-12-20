@@ -27,3 +27,23 @@ std::string utils::dbvcode2name(char code){
         default: throw "dbvcode2name: invalid code given";
     }
 }
+
+std::string utils::tokentype2name(char type){
+    switch(type){
+        case t_EOF:         return "EOF";
+        case t_IDENTIFIER:  return "IDENTIFIER";
+        case t_KEYWORD:     return "KEYWORD";
+        case t_LIT_NUM:     return "LIT_NUM";
+        case t_LIT_STR:     return "LIT_STR";
+        case t_OPERATOR:    return "OPERATOR";
+    }
+}
+
+char utils::name2dbvar(std::string vcode){
+    if(vcode == "int") return dbv_INT;
+    if(vcode == "float") return dbv_FLOAT;
+    if(vcode == "varchar") return dbv_VARCHAR;
+    if(vcode == "timestamp") return dbv_TIMESTAMP;
+    std::string errmsg = "utils::name2dbvar: invalid type given: " + vcode;
+    throw errmsg;
+}
