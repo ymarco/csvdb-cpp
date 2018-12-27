@@ -22,10 +22,10 @@ public:
 class Tokenizer{
 private:
     std::string _text;
-    size_t _text_len; 
-    size_t _curser = 0; // index to _text
-    size_t _row = 0;
-    size_t _column = 0;
+    unsigned short _text_len; 
+    unsigned short _curser = 0; // index to _text
+    unsigned short _row = 0;
+    unsigned short _column = 0;
     std::vector<std::string> __text_split_by_lines;
 
     char _cur();

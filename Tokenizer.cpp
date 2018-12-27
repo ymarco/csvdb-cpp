@@ -131,7 +131,7 @@ std::pair<char, std::string> Tokenizer::_get_lit_str(){
 }
 
 std::pair<char, std::string> Tokenizer::_get_lit_num(){
-    size_t start_pos = _curser; //used for error printing
+    unsigned short start_pos = _curser; //used for error printing
     std::string token_val;
     if(!utils::is_digit_or_dot_or_pm(_cur()))
        throw_err("Tokenizer: _get_lit_num was called, but the \"number\" didnt start with digit,.,+,- in the _cur");

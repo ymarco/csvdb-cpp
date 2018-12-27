@@ -1,6 +1,6 @@
 #include "Tokenizer.h"
-#include "Commands/Create.h" //only for testing
 #include "Parser.h"
+#include "Commands/Command.h"
 #include <utility> // temp
 #include <string>
 #include <iostream>
@@ -14,10 +14,8 @@ std::string get_usr_cmd(){
 
     while(1){
         std::getline(std::cin, line);
-        size_t endpos = line.find(";");
 
-        if(endpos!=std::string::npos){
-            res += line.substr(0, endpos);
+        if(line == ";"){
             return res;
         }
         res += line;
@@ -28,8 +26,6 @@ std::string get_usr_cmd(){
 
 
 int main(){
-    
-    std::cout << "hello world\n";
     /*
     std::string name("movies");
     std::pair<char,std::string> args[] = {{1, "id"}, {3, "title"}};
@@ -43,8 +39,11 @@ int main(){
         Tokenizer tkzr(cmd);
         try{
             Parser parser(tkzr);
-            auto cmd = parser.Parse();
-            std::cout << cmd.first;
+            Command* cmd = parser.Parse();
+            std::cout<<"executing!\n";
+            cmd->execute();
+            delete cmd;  
+            
         }catch(ParseException &e){
             std::cout << "error cought\n";
             std::cout << e.what();

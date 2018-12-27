@@ -28,7 +28,7 @@
 #include <string>
 
 namespace utils{
-    bool is_in_str_array(std::string* a,size_t size, std::string& s);
+    bool is_in_str_array(std::string* a,unsigned short size, std::string& s);
     bool is_alphabetic_or_underscore(char x);
     bool is_digit_or_dot_or_pm(char x);
 

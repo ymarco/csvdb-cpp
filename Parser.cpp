@@ -33,24 +33,23 @@ Parser::Parser(Tokenizer& tkzr)
 
 void Parser::_proceed_token(){
     _curr_token = __tkzr.NextToken();
-    std::cout << "token: " <<  (int)_curr_token.first << ", " << _curr_token.second << "\n";
 }
 
-std::pair<char, void*> Parser::Parse(){
+Command* Parser::Parse(){
     _proceed_token();
     if(_curr_token.first == t_EOF){
-        return {cmd_NONE, nullptr};
+        Command* nullcmd = new Command;
+        return nullcmd;
     }
     if(_curr_token.first != t_KEYWORD){
-        std::string errmsg = "first token was not of type keyword, token: " + _curr_token.second;
-        throw errmsg;
+        __tkzr.throw_err("first token was not a keyword");
     }
     // now determining what kind of command it is
     if(_curr_token.second == "create")      return _parse_create();
     //else if(toke.second = ...){...
 }
 
-std::pair<char, void*> Parser::_parse_create(){
+Command* Parser::_parse_create(){
     std::string name;
     bool enable_ifnexists = false;
     std::vector<std::pair<char, std::string>> args_vec; // array of (TYPE, name)
@@ -58,11 +57,9 @@ std::pair<char, void*> Parser::_parse_create(){
     char arg_type;
     // check for TABLE kw
     _expect_next_token({t_KEYWORD, "table"});
-    std::cout << "\tgot table kw\n";
     // check for [IF NOT EXISTS]
     _proceed_token();
     if(_curr_token == std::pair<char, std::string>(t_KEYWORD, "if")){
-        std::cout << "\t now in if not exists\n";
         _expect_next_token({t_KEYWORD, "not"});
         _expect_next_token({t_KEYWORD, "exists"});
         _proceed_token();
@@ -77,10 +74,8 @@ std::pair<char, void*> Parser::_parse_create(){
     _expect_next_token({t_OPERATOR, "("});
 
     while(true){ // now reading arguments consisting of IDENTIFIER (name), KEYWORD (type), OPERATOR
-        std::cout << "  getting name\n";
         _expect_next_token(t_IDENTIFIER); // argument name
         arg_name = _curr_token.second;
-        std::cout << "  getting type\n";
         _expect_next_token(t_KEYWORD); // argument type
         if(utils::is_in_str_array(_types, 4, _curr_token.second)){
             char arg_type = utils::name2dbvar(_curr_token.second);
@@ -99,5 +94,5 @@ std::pair<char, void*> Parser::_parse_create(){
     }
     _expect_next_token(t_EOF);
     Create* res = new Create(name, enable_ifnexists, &args_vec[0], args_vec.size());
-    return {cmd_CREATE, res};
+    return res;
 }
