@@ -1,28 +1,13 @@
+#include <iostream>
+#include <string>
+
 #include "Tokenizer.h"
 #include "Parser.h"
+#include "input.h"
 #include "Commands/Command.h"
-#include <utility> // temp
-#include <string>
-#include <iostream>
+//#include "Schema.h"
 
-bool debug_mode = true;
-
-std::string get_usr_cmd(){
-    std::string res;
-    std::string line;
-    std::cout << "\ncsvdb> ";
-
-    while(1){
-        std::getline(std::cin, line);
-
-        if(line == ";"){
-            return res;
-        }
-        res += line;
-        res += "\n";
-        std::cout << "       ";  
-    }
-}
+//std::vector<Schema> Tables;
 
 
 int main(){
@@ -35,11 +20,11 @@ int main(){
     
     std::string cmd;
     while(1){
-        cmd = get_usr_cmd();
+        cmd = input::get_terminal_cmd();
         Tokenizer tkzr(cmd);
         try{
-            Parser parser(tkzr);
-            Command* cmd = parser.Parse();
+            Parser parser(tkzr); // creating parser
+            Command* cmd = parser.Parse(); // parsing
             std::cout<<"executing!\n";
             cmd->execute();
             delete cmd;  

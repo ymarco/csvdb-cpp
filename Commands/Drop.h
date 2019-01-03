@@ -8,11 +8,11 @@
 class Drop {
 private:
 	const std::string _name;
-	const bool _enable_ifnexists;
+	const bool _enable_ifexists;
 	void _create_json();
 
 public:
-	Drop(std::string name, bool enable_ifnexists);
+	Drop(std::string name, bool enable_ifexists);
 	void execute();
 };
 

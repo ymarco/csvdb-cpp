@@ -1,4 +1,5 @@
 #include "utils.h"
+#include <iostream>
 
 bool utils::is_in_str_array(std::string* a, unsigned short size, std::string& s){
     for(unsigned short i=0; i<size; i++){
@@ -19,12 +20,13 @@ bool utils::is_digit_or_dot_or_pm(char x){
 }
 
 std::string utils::dbvcode2name(char code){
+    std::cout << "type : " << code << "\n";
     switch(code){
-        case 1: return "int";
-        case 2: return "float";
-        case 3: return "varchar";
-        case 4: return "timestamp";
-        default: throw "dbvcode2name: invalid code given";
+        case dbv_INT:        return "int";
+        case dbv_FLOAT:      return "float";
+        case dbv_VARCHAR:    return "varchar";
+        case dbv_TIMESTAMP:  return "timestamp";
+        default: return "unknown" /* throw "dbvcode2name: invalid code given" */;
     }
 }
 

@@ -1,8 +1,8 @@
-#include "Parser.h"
 #include <string>
-#include "utils.h"
 #include <vector>
 #include <iostream>
+#include "Parser.h"
+#include "utils.h"
 
 std::string _types[4] = {
     "int",
@@ -45,15 +45,16 @@ Command* Parser::Parse(){
         __tkzr.throw_err("first token was not a keyword");
     }
     // now determining what kind of command it is
-    if(_curr_token.second == "create")      return _parse_create();
+    if(_curr_token.second == "create") return _parse_create();
     //else if(toke.second = ...){...
+    Command* nullcmd = new Command;
+    return nullcmd;
 }
 
 Command* Parser::_parse_create(){
     std::string name;
     bool enable_ifnexists = false;
-    std::vector<std::pair<char, std::string>> args_vec; // array of (TYPE, name)
-    std::string arg_name;
+    std::vector<std::pair<char, std::string>>* args_vec_ptr = new std::vector<std::pair<char, std::string>>; // array of (TYPE, name)
     char arg_type;
     // check for TABLE kw
     _expect_next_token({t_KEYWORD, "table"});
@@ -75,12 +76,14 @@ Command* Parser::_parse_create(){
 
     while(true){ // now reading arguments consisting of IDENTIFIER (name), KEYWORD (type), OPERATOR
         _expect_next_token(t_IDENTIFIER); // argument name
-        arg_name = _curr_token.second;
+        std::string arg_name = _curr_token.second;
         _expect_next_token(t_KEYWORD); // argument type
-        if(utils::is_in_str_array(_types, 4, _curr_token.second)){
-            char arg_type = utils::name2dbvar(_curr_token.second);
-            args_vec.push_back({arg_type, arg_name});
-        }else __tkzr.throw_err("parse error: invalid database type");
+        if(!utils::is_in_str_array(_types, 4, _curr_token.second)){ // not a valid type
+            __tkzr.throw_err("parse error: invalid database type");
+        }
+        char arg_type = utils::name2dbvar(_curr_token.second);
+        std::cout << "type generated: " << (int)arg_type << "\n";
+        args_vec_ptr->push_back({arg_type, arg_name});
         std::cout << "  getting oper\n";
         _expect_next_token(t_OPERATOR);
         if(_curr_token.second == ","){ // more arguments
@@ -93,6 +96,6 @@ Command* Parser::_parse_create(){
         __tkzr.throw_err("unxpected token: expecting ',' or ')'");    
     }
     _expect_next_token(t_EOF);
-    Create* res = new Create(name, enable_ifnexists, &args_vec[0], args_vec.size());
+    Create* res = new Create(name, enable_ifnexists, *args_vec_ptr, args_vec_ptr->size());
     return res;
 }
