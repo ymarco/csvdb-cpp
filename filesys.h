@@ -1,12 +1,10 @@
 #ifndef FILESYS_H
 #define FILESYS_H
 
-//#include <exception>
+#include <exception>
 
 #include <filesystem>
-namespace filesys = std::filesystem;
-
-/* #ifdef _WIN32
+#ifdef _WIN32
     namespace filesys = std::experimental::filesystem;
 #else
     #ifdef __unix
@@ -16,5 +14,5 @@ namespace filesys = std::filesystem;
     #endif
     
 #endif
-*/
+
 #endif
