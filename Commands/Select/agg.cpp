@@ -3,56 +3,51 @@
 using namespace agg;
 
 
-template <>
-template <class AggType> // Aggtype is the type of aggregator - int, float...
-Sum<AggType> merge<Sum<AggType>>(Sum<AggType>* aggs, unsigned short count){
-    AggType newval;
+template <class T>
+Sum<T> merge(Sum<T>* aggs, unsigned short count){
+    T newval;
     for(unsigned short i=0; i<count; i++){
-        newval ++ aggs[i].get_val();
+        newval += aggs[i].get_val();
     }
-    return Sum<AggType>(newval);
+    return Sum<T>(newval);
 };
 
-template <>
-template <class AggType> // Aggtype is the type of aggregator - int, float...
-Min<AggType> merge<Min<AggType>>(Min<AggType>* aggs, unsigned short count){
-    Min newagg;
+template <class T>
+Min<T> merge(Min<T>* aggs, unsigned short count){
+    Min<T> newagg;
     for(unsigned short i=0; i<count; i++){
         newagg.aggregate(aggs[i].get_val());
     }
-    return Min<AggType>(newval);
+    return newagg;
 };
 
-template <>
-template <class AggType> // Aggtype is the type of aggregator - int, float...
-Max<AggType> merge<Max<AggType>>(Max<AggType>* aggs, unsigned short count){
-    Max newagg;
+template <class T>
+Max<T> merge(Max<T>* aggs, unsigned short count){
+    Max<T> newagg;
     for(unsigned short i=0; i<count; i++){
         newagg.aggregate(aggs[i].get_val());
     }
-    return Max<AggType>(newval);
+    return newagg;
 };
 
-template <>
-template <class AggType> // Aggtype is the type of aggregator - int, float...
-Count<AggType> merge<Count<AggType>>(Count<AggType>* aggs, unsigned short count){
+template <class T>
+Count<T> merge(Count<T>* aggs, unsigned short count){
     unsigned int newval;
     for(unsigned short i=0; i<count; i++){
-        newval ++ aggs[i].get_val();
+        newval += aggs[i].get_val();
     }
-    return Count<AggType>(newval);
+    return Count<T>(newval);
 };
 
-template <>
-template <class AggType> // Aggtype is the type of aggregator - int, float...
-Avg<AggType> merge<Avg<AggType>>(Avg<AggType>* aggs, unsigned short Avg){
+template <class T>
+Avg<T> merge(Avg<T>* aggs, unsigned short Avg){
     unsigned int newcount;
-    double newsum
+    double newsum;
     for(unsigned short i=0; i<Avg; i++){
-        newsum =+ aggs[i].get_val();
-
+        newsum =+ aggs[i].sum; 
+        newcount += aggs[i].count;
     }
-    return Avg<AggType>(newval);
+    return {newsum, newcount};
 };
 
 
