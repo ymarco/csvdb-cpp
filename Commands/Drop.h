@@ -3,13 +3,13 @@
 
 #include <string>
 #include <utility>
+#include "Command.h"
+#include "../filesys.h"
 
-
-class Drop {
+class Drop: public Command {
 private:
 	const std::string _name;
 	const bool _enable_ifexists;
-	void _create_json();
 
 public:
 	Drop(std::string name, bool enable_ifexists);
