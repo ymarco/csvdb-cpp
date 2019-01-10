@@ -45,8 +45,10 @@ Command* Parser::Parse(){
         __tkzr.throw_err("first token was not a keyword");
     }
     // now determining what kind of command it is
-    if(_curr_token.second == "create") return _parse_create();
-    //else if(toke.second = ...){...
+    std::string cmd = _curr_token.second;
+    if(cmd == "create")     return _parse_create();
+    if(cmd == "drop")       return _parse_drop();
+    // if(cmd = ...) ...
     Command* nullcmd = new Command;
     return nullcmd;
 }
@@ -98,4 +100,27 @@ Command* Parser::_parse_create(){
     _expect_next_token(t_EOF);
     Create* res = new Create(name, enable_ifnexists, *args_vec_ptr, args_vec_ptr->size());
     return res;
+}
+
+Command* Parser::_parse_drop(){
+    bool enable_ifexists = false;
+    std::string name;
+    // check for table kw
+    _expect_next_token({t_KEYWORD, "table"});
+    // check for [IF EXISTS]
+    _proceed_token();
+    if(_curr_token == std::pair<char, std::string>(t_KEYWORD, "if")){
+        _expect_next_token({t_KEYWORD, "exists"});
+        enable_ifexists = true;
+        _proceed_token();
+    }
+    //check for table_name
+    if(_curr_token.first == t_IDENTIFIER){
+    name = _curr_token.second;
+    } else __tkzr.throw_err("KEYWORD _table_name not found");
+
+    _expect_next_token(t_EOF);
+    Drop* res = new Drop(name, enable_ifexists);
+    return res;
+
 }

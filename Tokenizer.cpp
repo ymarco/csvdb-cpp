@@ -225,7 +225,7 @@ bool Tokenizer::__eof(){
 void Tokenizer::throw_err(std::string msg){
     //std::cout << "throw_err: column is " << _column << "\n";
     std::string info_and_msg = _err_info() + msg + "\n";
-    throw ParseException(info_and_msg);
+    throw ParseError(info_and_msg);
 }
 
 std::string Tokenizer::_err_info(){
@@ -238,8 +238,8 @@ std::string Tokenizer::_err_info(){
     return res;
 }
 
-ParseException::ParseException(std::string msg): _msg(msg){}
+ParseError::ParseError(std::string msg): _msg(msg){}
 
-const char* ParseException::what() const throw() {
+const char* ParseError::what() const throw() {
     return _msg.c_str();
 }

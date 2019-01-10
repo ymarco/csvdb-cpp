@@ -7,12 +7,12 @@
 #include <vector>
 #include <exception>
 
-class ParseException : public std::exception {
+class ParseError : public std::exception {
 private:
     std::string _msg;
 public:
-    ParseException(std::string msg);
-    const char * what () const throw ();
+    ParseError(std::string msg);
+    const char * what() const throw ();
 };
 
 

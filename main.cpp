@@ -29,7 +29,7 @@ int main(){
             cmd->execute();
             delete cmd;  
             
-        }catch(ParseException &e){
+        }catch(ParseError &e){
             std::cout << "error cought\n";
             std::cout << e.what();
         }
