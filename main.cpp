@@ -1,13 +1,14 @@
 #include <iostream>
 #include <string>
+#include <unordered_map>
 
 #include "Tokenizer.h"
 #include "Parser.h"
 #include "input.h"
 #include "Commands/Command.h"
-//#include "Schema.h"
+#include "Schema.h"
 
-//std::vector<Schema> Tables;
+std::unordered_map<std::string, Schema> g_table_name_to_schema;
 
 
 int main(){

@@ -9,19 +9,24 @@
 
 Create::Create(std::string name,
     bool enable_ifnexists, 
-    std::vector<std::pair<char, std::string>>& args,
-    unsigned short args_cnt
-): _name(name), _enable_ifnexists(enable_ifnexists), _args(args), _args_cnt(args_cnt){};
+    std::shared_ptr<std::vector<std::pair<char, std::string>>> args)
+: _name(name), _enable_ifnexists(enable_ifnexists), _args(args){};
 
 void Create::execute(){
     // create directory _name
+    if(g_table_name_to_schema.find(_name) != g_table_name_to_schema.end()){ // existing table
+        if(_enable_ifnexists){
+            return;
+        }else{
+            throw /* CmdError */ "you tried to create an existing table without the ifnexists flag";
+        }
+    }
+    
     filesys::path path(_name);
     filesys::create_directory(path);
     _create_json();
-}
-
-Create::~Create(){
-    delete &(_args[0]);
+    // AND THE MOST IMPORTANT THING:
+    g_table_name_to_schema.insert({_name, Schema(_name, *_args)});
 }
 
 
@@ -30,10 +35,9 @@ void Create::_create_json(){
     json j_schema;
     j_schema["schema"] = json::array();
     //pushing arguments name and type into the json
-    for(unsigned short i = 0; i < _args_cnt; i++){
-        j_schema["schema"][i]["field"] = /* "lol" */_args[i].second;
-        j_schema["schema"][i]["type"] = utils::dbvcode2name(_args[i].first);
-
+    for(ushort i = 0, size = _args->size(); i < size; i++){
+        j_schema["schema"][i]["field"] = /* "lol" */(*_args)[i].second;
+        j_schema["schema"][i]["type"] = utils::dbvcode2name((*_args)[i].first);
     }
     const std::string path = _name + "/table.json";
     std::ofstream file(path.c_str());
