@@ -30,13 +30,11 @@ public:
 
 class Schema{
 public:
-    const std::string name;
-    Schema(std::string name_,
-        std::vector<std::pair<dbvar, std::string>> field_names_and_types // array of (type, name)
+    Schema(const std::vector<std::pair<dbvar, std::string>>& field_names_and_types // array of (type, name)
     );
     ~Schema();
-    const ushort field_cnt;
-    uint line_cnt;
+    const unsigned short field_cnt;
+    unsigned int line_cnt;
     Column* columns = nullptr; // array allocated on heap of Column objs
     std::unordered_map<std::string, ushort> field_name_to_index;
 

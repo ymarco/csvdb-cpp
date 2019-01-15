@@ -26,7 +26,7 @@ void Create::execute(){
     filesys::create_directory(path);
     _create_json();
     // AND THE MOST IMPORTANT THING:
-    g_table_name_to_schema.insert({_name, Schema(_name, *_args)});
+    g_table_name_to_schema.insert({_name, Schema(*_args)});
 }
 
 

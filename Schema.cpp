@@ -1,5 +1,6 @@
 #include "Schema.h"
 #include <tuple>
+#include <fstream>
 
 Column::~Column(){
     switch(type){
@@ -48,9 +49,8 @@ void Column::aggregate(void* val){
     }
 }
 
-Schema::Schema(std::string name_,
-    std::vector<std::pair<dbvar, std::string>> fields_type_and_name)
-    : name(name_), field_cnt(fields_type_and_name.size()){
+Schema::Schema(const std::vector<std::pair<dbvar, std::string>>& fields_type_and_name)
+    : field_cnt(fields_type_and_name.size()){
 
     columns = new Column[field_cnt];
     for(ushort i=0; i<field_cnt; i++){
@@ -63,4 +63,13 @@ Schema::Schema(std::string name_,
 
 Schema::~Schema(){
     delete[] columns;
+}
+
+
+void Schema::create_std_index_file() const{
+    std::ofstream file(",,std_index_file.bin", std::ios::binary);
+    for(unsigned int i=0; i<line_cnt; i++){
+        file.write((char*)&i, sizeof(unsigned int)/8);
+    }
+
 }
