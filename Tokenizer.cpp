@@ -159,6 +159,15 @@ std::pair<char, std::string> Tokenizer::_get_lit_num(){
 
 std::pair<char, std::string> Tokenizer::_get_operator(){
     std::string token_val(1, _cur());
+    _curser++;
+    if(!__eof()){
+        std::string double_token_val = token_val + _cur();
+        if(utils::is_in_str_array(t_operators, 11, token_val+_cur())){ // double digit operator like >=
+            return {t_OPERATOR, double_token_val};
+        }
+    }
+    // not a double digit op
+    _curser--;
     _proceed_cur();
     if(utils::is_in_str_array(t_operators, 11, token_val)){
         return {t_OPERATOR, token_val};

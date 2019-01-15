@@ -19,7 +19,7 @@ namespace agg{
     public:
         T val;
         constexpr Min(T inp=std::numeric_limits<T>::min()): val(inp){};
-        inline void aggregate(T inp){if(inp<val) val=inp;}
+        inline void aggregate(T inp){if(inp>val) val=inp;}
         inline T getval() const{return val;};
     };
 

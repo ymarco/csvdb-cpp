@@ -3,6 +3,7 @@
 #include <iostream>
 #include "Parser.h"
 #include "utils.h"
+#include <memory>
 
 std::string _types[4] = {
     "int",
@@ -33,6 +34,7 @@ Parser::Parser(Tokenizer& tkzr)
 
 void Parser::_proceed_token(){
     _curr_token = __tkzr.NextToken();
+    //std::cout << _curr_token.first << "," << _curr_token.second << "\n";
 }
 
 Command* Parser::Parse(){
@@ -56,13 +58,13 @@ Command* Parser::Parse(){
 Command* Parser::_parse_create(){
     std::string name;
     bool enable_ifnexists = false;
-    std::vector<std::pair<char, std::string>>* args_vec_ptr = new std::vector<std::pair<char, std::string>>; // array of (TYPE, name)
+    auto args_vec_ptr = std::make_shared<std::vector<std::pair<char, std::string>>>(); // array of (TYPE, name)
     char arg_type;
     // check for TABLE kw
     _expect_next_token({t_KEYWORD, "table"});
     // check for [IF NOT EXISTS]
     _proceed_token();
-    if(_curr_token == std::pair<char, std::string>(t_KEYWORD, "if")){
+    if(_curr_token == std::pair<char, std::string>({t_KEYWORD, "if"})){
         _expect_next_token({t_KEYWORD, "not"});
         _expect_next_token({t_KEYWORD, "exists"});
         _proceed_token();
@@ -81,7 +83,7 @@ Command* Parser::_parse_create(){
         std::string arg_name = _curr_token.second;
         _expect_next_token(t_KEYWORD); // argument type
         if(!utils::is_in_str_array(_types, 4, _curr_token.second)){ // not a valid type
-            __tkzr.throw_err("parse error: invalid database type");
+            __tkzr.throw_err("parse error: insecondid database type");
         }
         char arg_type = utils::name2dbvar(_curr_token.second);
         std::cout << "type generated: " << (int)arg_type << "\n";
@@ -98,7 +100,7 @@ Command* Parser::_parse_create(){
         __tkzr.throw_err("unxpected token: expecting ',' or ')'");    
     }
     _expect_next_token(t_EOF);
-    Create* res = new Create(name, enable_ifnexists, *args_vec_ptr, args_vec_ptr->size());
+    Create* res = new Create(name, enable_ifnexists, args_vec_ptr);
     return res;
 }
 
@@ -109,7 +111,7 @@ Command* Parser::_parse_drop(){
     _expect_next_token({t_KEYWORD, "table"});
     // check for [IF EXISTS]
     _proceed_token();
-    if(_curr_token == std::pair<char, std::string>(t_KEYWORD, "if")){
+    if(_curr_token == std::pair<char, std::string>({t_KEYWORD, "if"})){
         _expect_next_token({t_KEYWORD, "exists"});
         enable_ifexists = true;
         _proceed_token();

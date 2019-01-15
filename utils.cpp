@@ -1,7 +1,8 @@
 #include "utils.h"
 #include <iostream>
 
-bool utils::is_in_str_array(std::string* a, unsigned short size, std::string& s){
+
+bool utils::is_in_str_array(std::string* a, unsigned short size, const std::string& s){
     for(unsigned short i=0; i<size; i++){
         if(a[i] == s)
             return true;

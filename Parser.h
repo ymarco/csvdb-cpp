@@ -3,6 +3,7 @@
 
 #include <utility>
 #include "Tokenizer.h"
+#include "utils.h"
 #include "Commands/Command.h"
 #include "Commands/Create.h"
 #include "Commands/Drop.h"

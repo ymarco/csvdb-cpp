@@ -33,7 +33,7 @@ private:
     std::string _err_info();
     std::pair<char, std::string> _get_identifier_or_keyword();
     std::pair<char, std::string> _get_lit_str();
-    std::pair<char, std::string> _get_lit_num(); // note that this returns a STRING containing the num
+    std::pair<char, std::string> _get_lit_num(); // note that this returns a STRING containing the num, e.g. "34" and NOT 34
     std::pair<char, std::string> _get_operator();
     void __skip_wspace();
     void __skip_comment();

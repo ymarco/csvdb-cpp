@@ -49,13 +49,14 @@ void Column::aggregate(void* val){
 }
 
 Schema::Schema(std::string name_,
-    std::vector<std::pair<std::string, char>> field_names_and_types)
-    :name(name_), field_cnt(field_names_and_types.size()){
+    std::vector<std::pair<char, std::string>> fields_type_and_name)
+    :name(name_), field_cnt(fields_type_and_name.size()){
 
     columns = new Column[field_cnt];
     for(ushort i=0; i<field_cnt; i++){
-        field_name_to_index[field_names_and_types[i].first] = i;
-        columns[i].set_type(field_names_and_types[i].second);
+        field_name_to_index[fields_type_and_name[i].second] = i;
+        columns[i].set_type(fields_type_and_name[i].first  
+    );
     }
 
 }
