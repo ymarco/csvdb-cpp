@@ -12,7 +12,7 @@ std::string _types[4] = {
     "timestamp"
 };
 
-void Parser::_expect_next_token(std::pair<char, std::string> expexted_token){
+void Parser::_expect_next_token(std::pair<TokenType, std::string> expexted_token){
     _proceed_token();
     if(_curr_token != expexted_token){
         std::string errmsg = "unxpected token: expecting '" + expexted_token.second + "'"; 
@@ -20,10 +20,10 @@ void Parser::_expect_next_token(std::pair<char, std::string> expexted_token){
     }
 }
 
-void Parser::_expect_next_token(char expected_token_type){
+void Parser::_expect_next_token(TokenType expected_token_type){
     _proceed_token();
     if(_curr_token.first != expected_token_type){
-        std::string errmsg = "unxpected token: expecting token of type " + utils::tokentype2name(expected_token_type); 
+        std::string errmsg = "unxpected token: expecting token of type " + Tokenizer::tokentype2name(expected_token_type); 
         __tkzr.throw_err(errmsg);
     }  
 }
@@ -58,13 +58,12 @@ Command* Parser::Parse(){
 Command* Parser::_parse_create(){
     std::string name;
     bool enable_ifnexists = false;
-    auto args_vec_ptr = std::make_shared<std::vector<std::pair<char, std::string>>>(); // array of (TYPE, name)
-    char arg_type;
+    auto args_vec_ptr = std::make_shared<std::vector<std::pair<dbvar, std::string>>>(); // array of (TYPE, name)
     // check for TABLE kw
     _expect_next_token({t_KEYWORD, "table"});
     // check for [IF NOT EXISTS]
     _proceed_token();
-    if(_curr_token == std::pair<char, std::string>({t_KEYWORD, "if"})){
+    if(_curr_token == std::pair<TokenType, std::string>({t_KEYWORD, "if"})){
         _expect_next_token({t_KEYWORD, "not"});
         _expect_next_token({t_KEYWORD, "exists"});
         _proceed_token();
@@ -85,9 +84,9 @@ Command* Parser::_parse_create(){
         if(!utils::is_in_str_array(_types, 4, _curr_token.second)){ // not a valid type
             __tkzr.throw_err("parse error: insecondid database type");
         }
-        char arg_type = utils::name2dbvar(_curr_token.second);
+        dbvar arg_type = utils::name2dbvar(_curr_token.second);
         std::cout << "type generated: " << (int)arg_type << "\n";
-        args_vec_ptr->push_back({arg_type, arg_name});
+        args_vec_ptr->emplace_back(arg_type, arg_name);
         std::cout << "  getting oper\n";
         _expect_next_token(t_OPERATOR);
         if(_curr_token.second == ","){ // more arguments
@@ -111,7 +110,7 @@ Command* Parser::_parse_drop(){
     _expect_next_token({t_KEYWORD, "table"});
     // check for [IF EXISTS]
     _proceed_token();
-    if(_curr_token == std::pair<char, std::string>({t_KEYWORD, "if"})){
+    if(_curr_token == std::pair<TokenType, std::string>({t_KEYWORD, "if"})){
         _expect_next_token({t_KEYWORD, "exists"});
         enable_ifexists = true;
         _proceed_token();

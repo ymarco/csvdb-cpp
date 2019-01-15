@@ -16,7 +16,7 @@ private:
 	const bool _enable_ifexists;
 
 public:
-	Drop(std::string name, bool enable_ifexists);
+	Drop(const std::string& name, bool enable_ifexists);
 	void execute();
 };
 

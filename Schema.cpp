@@ -16,7 +16,7 @@ Column::~Column(){
 
 }
 
-void Column::set_type(char type_){
+void Column::set_type(dbvar type_){
     type = type_;
     switch(type){
         case dbv_INT:
@@ -49,8 +49,8 @@ void Column::aggregate(void* val){
 }
 
 Schema::Schema(std::string name_,
-    std::vector<std::pair<char, std::string>> fields_type_and_name)
-    :name(name_), field_cnt(fields_type_and_name.size()){
+    std::vector<std::pair<dbvar, std::string>> fields_type_and_name)
+    : name(name_), field_cnt(fields_type_and_name.size()){
 
     columns = new Column[field_cnt];
     for(ushort i=0; i<field_cnt; i++){

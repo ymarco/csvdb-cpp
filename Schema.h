@@ -19,9 +19,9 @@ public:
 
 class Column{
 public:
-    void set_type(char type_);
+    void set_type(dbvar type_);
     std::string name;
-    char type = 0;
+    dbvar type;
     void* aggs;
     void aggregate(void* val);
     char get_type();
@@ -32,7 +32,7 @@ class Schema{
 public:
     const std::string name;
     Schema(std::string name_,
-        std::vector<std::pair<char, std::string>> field_names_and_types // array of (type, name)
+        std::vector<std::pair<dbvar, std::string>> field_names_and_types // array of (type, name)
     );
     ~Schema();
     const ushort field_cnt;

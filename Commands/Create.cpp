@@ -7,9 +7,9 @@
 
 
 
-Create::Create(std::string name,
+Create::Create(const std::string& name,
     bool enable_ifnexists, 
-    std::shared_ptr<std::vector<std::pair<char, std::string>>> args)
+    std::shared_ptr<std::vector<std::pair<dbvar, std::string>>> args)
 : _name(name), _enable_ifnexists(enable_ifnexists), _args(args){};
 
 void Create::execute(){
