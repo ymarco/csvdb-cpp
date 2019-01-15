@@ -64,12 +64,3 @@ Schema::Schema(const std::vector<std::pair<dbvar, std::string>>& fields_type_and
 Schema::~Schema(){
     delete[] columns;
 }
-
-
-void Schema::create_std_index_file() const{
-    std::ofstream file(",,std_index_file.bin", std::ios::binary);
-    for(unsigned int i=0; i<line_cnt; i++){
-        file.write((char*)&i, sizeof(unsigned int)/8);
-    }
-
-}
