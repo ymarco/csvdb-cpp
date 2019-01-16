@@ -125,3 +125,29 @@ Command* Parser::_parse_drop(){
     return res;
 
 }
+
+Command* Parser::_parse_load(){
+    std::string src;
+    std::string dst;
+    unsigned int ignore_lines = 0;
+
+    _expect_next_token({t_KEYWORD, "data"});
+    _expect_next_token({t_KEYWORD, "infile"});
+    _expect_next_token(t_IDENTIFIER);
+    src = _curr_token.second;
+    _expect_next_token({t_KEYWORD, "into"});
+    _expect_next_token({t_KEYWORD, "table"});
+    _proceed_token();
+    if(_curr_token.first != t_EOF){
+        _expect_next_token({t_KEYWORD, "ignore"});
+        _expect_next_token(t_LIT_NUM);
+        // convert str number to binary int, e.g "123" to 123
+        std::stringstream tmp(_curr_token.second);
+        tmp >> ignore_lines;
+    }else if(_curr_token.first != t_EOF){
+        __tkzr.throw_err("unexpected token");
+    }
+
+    auto cmd = new Load(src, dst, ignore_lines);
+    return cmd;
+}

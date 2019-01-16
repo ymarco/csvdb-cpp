@@ -11,7 +11,7 @@ private:
     unsigned short _ignore_lines = 0;
 
 public:
-    Load(std::string src, std::string dst, unsigned short ignore_lines);
+    Load(std::string src, std::string dst, unsigned int ignore_lines);
     void execute();
 };
 
