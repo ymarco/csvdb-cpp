@@ -1,6 +1,6 @@
 #include "Schema.h"
 #include <tuple>
-#include <fstream>
+#include "FileWriteBuffer.h"
 
 Column::~Column(){
     switch(type){
@@ -55,12 +55,20 @@ Schema::Schema(const std::vector<std::pair<dbvar, std::string>>& fields_type_and
     columns = new Column[field_cnt];
     for(ushort i=0; i<field_cnt; i++){
         field_name_to_index[fields_type_and_name[i].second] = i;
-        columns[i].set_type(fields_type_and_name[i].first  
-    );
+        columns[i].set_type(fields_type_and_name[i].first);
     }
 
 }
 
 Schema::~Schema(){
     delete[] columns;
+}
+
+
+void Schema::create_std_index_file(const std::string& filename) const{
+    FileWriteBuffer<unsigned int> writer(filename + "/,std_index");
+    for(unsigned int i=0; i<line_cnt; i++){
+        writer.write(i);
+    }
+
 }

@@ -29,6 +29,8 @@ public:
 };
 
 class Schema{
+private:
+    void create_std_index_file(const std::string& filename) const;
 public:
     Schema(const std::vector<std::pair<dbvar, std::string>>& field_names_and_types // array of (type, name)
     );
