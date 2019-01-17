@@ -38,7 +38,7 @@ public:
     const unsigned short field_cnt;
     unsigned int line_cnt;
     Column* columns = nullptr; // array allocated on heap of Column objs
-    std::unordered_map<std::string, ushort> field_name_to_index;
+    std::unordered_map<std::string, unsigned short> field_name_to_index;
 
 };
 

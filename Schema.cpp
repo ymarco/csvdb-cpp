@@ -53,7 +53,7 @@ Schema::Schema(const std::vector<std::pair<dbvar, std::string>>& fields_type_and
     : field_cnt(fields_type_and_name.size()){
 
     columns = new Column[field_cnt];
-    for(ushort i=0; i<field_cnt; i++){
+    for(unsigned short i=0; i<field_cnt; i++){
         field_name_to_index[fields_type_and_name[i].second] = i;
         columns[i].set_type(fields_type_and_name[i].first);
     }
