@@ -148,6 +148,6 @@ Command* Parser::_parse_load(){
         __tkzr.throw_err("unexpected token");
     }
 
-    auto cmd = new Load(src, dst, ignore_lines);
+    Command* cmd = new Load(src, dst, ignore_lines);
     return cmd;
 }

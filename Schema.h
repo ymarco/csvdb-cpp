@@ -24,7 +24,6 @@ public:
     dbvar type;
     void* aggs;
     void aggregate(void* val);
-    char get_type();
     ~Column();
 };
 

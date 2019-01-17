@@ -1,4 +1,5 @@
 #include "Load.h"
+#include "../utils.h"
 
 Load::Load(std::string src, std::string dst, unsigned int ignore_lines = 0)
     : _src(src), _dst(dst), _ignore_lines(ignore_lines){}
@@ -46,8 +47,8 @@ void Load::execute()
 
 	for (size_t i = 0; i < out_files.size(); i++)
 	{
-		int ct = schema.columns[i].get_type();
-		if (ct == 2)
+		dbvar ct = schema.columns[i].type;
+		if (ct == dbv_VARCHAR)
 			out_files[i].open(_dst + "/" + std::to_string(i), std::ios_base::app);
 		else
 			out_files[i].open(_dst + "/" + std::to_string(i), std::ios::binary);
@@ -57,23 +58,23 @@ void Load::execute()
 	while (std::getline(file, line))
 	{
 		std::vector<std::string> vector_line = split(line);
-		for (int i = 0; i < (int)(vector_line.size()); i++)
+		for (size_t i = 0; i < (vector_line.size()); i++)
 		{
-			int ct = schema.columns[i].get_type();
-
+			dbvar ct = schema.columns[i].type;
 			out_files[i] << vector_line[i];
-			if (ct == 1)
-			{
+			
+			switch(ct){
+			case dbv_INT:
 				int value = std::stoi(vector_line[i]);
 				out_files[i].write((char*)(&value), sizeof(int));
-			}
-			else if (ct == 2)
-			{
+				break;
+			case dbv_FLOAT:	
 				float value = std::stof(vector_line[i]);
 				out_files[i].write((char*)(&value), sizeof(float));
-			}
-			else
+				break;
+			default:
 				out_files[i] << vector_line[i] << "\n";
+				break;
 		}
 		line_cnt++;
 	}
