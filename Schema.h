@@ -35,10 +35,10 @@ public:
         std::vector<std::pair<char, std::string>> field_names_and_types // array of (type, name)
     );
     ~Schema();
-    const ushort field_cnt;
-    uint line_cnt;
+    const unsigned short field_cnt;
+	unsigned int line_cnt;
     Column* columns = nullptr; // array allocated on heap of Column objs
-    std::unordered_map<std::string, ushort> field_name_to_index;
+    std::unordered_map<std::string, unsigned short> field_name_to_index;
 
 };
 

@@ -35,7 +35,7 @@ void Create::_create_json(){
     json j_schema;
     j_schema["schema"] = json::array();
     //pushing arguments name and type into the json
-    for(ushort i = 0, size = _args->size(); i < size; i++){
+    for(unsigned short i = 0, size = _args->size(); i < size; i++){
         j_schema["schema"][i]["field"] = /* "lol" */(*_args)[i].second;
         j_schema["schema"][i]["type"] = utils::dbvcode2name((*_args)[i].first);
     }
@@ -45,5 +45,5 @@ void Create::_create_json(){
     if(!file.is_open()){
         throw "error in opening table.json file";
     }   
-    file << j_schema;    
+    file << j_schema;
 };
