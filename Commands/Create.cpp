@@ -7,9 +7,9 @@
 
 
 
-Create::Create(std::string name,
+Create::Create(const std::string& name,
     bool enable_ifnexists, 
-    std::shared_ptr<std::vector<std::pair<char, std::string>>> args)
+    std::shared_ptr<std::vector<std::pair<dbvar, std::string>>> args)
 : _name(name), _enable_ifnexists(enable_ifnexists), _args(args){};
 
 void Create::execute(){
@@ -26,7 +26,7 @@ void Create::execute(){
     filesys::create_directory(path);
     _create_json();
     // AND THE MOST IMPORTANT THING:
-    g_table_name_to_schema.insert({_name, Schema(_name, *_args)});
+    g_table_name_to_schema.insert({_name, Schema(*_args)});
 }
 
 

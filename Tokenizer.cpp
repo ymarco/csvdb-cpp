@@ -2,7 +2,6 @@
 #include <algorithm> //used for lowercasing
 #include <sstream>
 #include <iostream>
-//#include <regex>
 
 
 std::string t_keywords[34] = {
@@ -56,10 +55,6 @@ std::string t_operators[11] = {
         "*",
 };
 
-char Tokenizer::_cur(){
-    return _text[_curser];
-    }
-
 Tokenizer::Tokenizer(std::string text)
 : _text_len(text.size()), _text(text){
     std::stringstream st_text(_text);
@@ -69,7 +64,7 @@ Tokenizer::Tokenizer(std::string text)
     }
 }
 
-std::pair<char, std::string> Tokenizer::NextToken(){
+std::pair<TokenType, std::string> Tokenizer::NextToken(){
     std::string token_val;
 
     __skip_wspace();
@@ -99,7 +94,7 @@ std::pair<char, std::string> Tokenizer::NextToken(){
 }
 
 // returns the identifier or keyword in current text position
-std::pair<char, std::string> Tokenizer::_get_identifier_or_keyword(){
+std::pair<TokenType, std::string> Tokenizer::_get_identifier_or_keyword(){
     std::string token_val;
     while( !__eof() && ( utils::is_alphabetic_or_underscore(_cur()) || isdigit(_cur()) ) ){
         token_val.push_back(_cur());
@@ -113,7 +108,7 @@ std::pair<char, std::string> Tokenizer::_get_identifier_or_keyword(){
     return {t_IDENTIFIER, token_val};
 }
 
-std::pair<char, std::string> Tokenizer::_get_lit_str(){
+std::pair<TokenType, std::string> Tokenizer::_get_lit_str(){
     std::string token_val;
     if(_cur()!=*"\"")
        throw_err("Tokenizer: _get_lit_str was called, but there wasnt a \" in the _cur");
@@ -130,7 +125,7 @@ std::pair<char, std::string> Tokenizer::_get_lit_str(){
     throw_err("Tokenizer: did not find the closing \"");
 }
 
-std::pair<char, std::string> Tokenizer::_get_lit_num(){
+std::pair<TokenType, std::string> Tokenizer::_get_lit_num(){
     unsigned short start_pos = _curser; //used for error printing
     std::string token_val;
     if(!utils::is_digit_or_dot_or_pm(_cur()))
@@ -157,7 +152,7 @@ std::pair<char, std::string> Tokenizer::_get_lit_num(){
     return {t_LIT_NUM, token_val};
 }
 
-std::pair<char, std::string> Tokenizer::_get_operator(){
+std::pair<TokenType, std::string> Tokenizer::_get_operator(){
     std::string token_val(1, _cur());
     _curser++;
     if(!__eof()){
@@ -231,13 +226,13 @@ bool Tokenizer::__eof(){
     return false;
 }
 
-void Tokenizer::throw_err(std::string msg){
+void Tokenizer::throw_err(const std::string& msg) const{
     //std::cout << "throw_err: column is " << _column << "\n";
     std::string info_and_msg = _err_info() + msg + "\n";
     throw ParseError(info_and_msg);
 }
 
-std::string Tokenizer::_err_info(){
+std::string Tokenizer::_err_info() const{
     std::string res(__text_split_by_lines[_row]);
     std::string spaces_indent(_column-1, *"_");
     //std::cout << spaces_indent << " <these were spaces indent\n";
@@ -251,4 +246,16 @@ ParseError::ParseError(std::string msg): _msg(msg){}
 
 const char* ParseError::what() const throw() {
     return _msg.c_str();
+}
+
+
+std::string Tokenizer::tokentype2name(TokenType type){
+    switch(type){
+        case t_EOF:         return "EOF";
+        case t_IDENTIFIER:  return "IDENTIFIER";
+        case t_KEYWORD:     return "KEYWORD";
+        case t_LIT_NUM:     return "LIT_NUM";
+        case t_LIT_STR:     return "LIT_STR";
+        case t_OPERATOR:    return "OPERATOR";
+    }
 }

@@ -6,8 +6,8 @@
 #include <vector>
 #include <memory>
 #include <unordered_map>
-#include "../Schema.h"
 #include "Command.h"
+#include "../Schema.h"
 #include "../filesys.h"
 #include "../utils.h"
 
@@ -17,13 +17,13 @@ class Create: public Command{
 private:
     const std::string _name;
     const bool _enable_ifnexists;
-    std::shared_ptr<std::vector<std::pair<char, std::string>>> _args; //represented as (char type, std::string name)
+    std::shared_ptr<std::vector<std::pair<dbvar, std::string>>> _args; //represented as (type, std::string name)
     void _create_json();
     
 public:
-    Create(std::string name,
+    Create(const std::string& name,
         bool enable_ifnexists, 
-        std::shared_ptr<std::vector<std::pair<char, std::string>>> args
+        std::shared_ptr<std::vector<std::pair<dbvar, std::string>>> args
     );
     const char *type = "create";
     void execute() override;
