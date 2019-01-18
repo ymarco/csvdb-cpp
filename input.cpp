@@ -28,7 +28,7 @@ std::vector<std::string> input::get_file_cmd(std::string file_path)
 	text.assign((std::istreambuf_iterator<char>(file)), (std::istreambuf_iterator<char>()));
 	std::string command;
 	bool comment_mod = false;
-	for (size_t i = 0; i < text.length; i++)
+	for (size_t i = 0; i < text.size(); i++)
 	{
 		if (text[i] == '\n')
 		{

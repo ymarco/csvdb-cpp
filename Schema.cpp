@@ -1,5 +1,4 @@
 #include "Schema.h"
-#include <tuple>
 #include "FileWriteBuffer.h"
 
 Column::~Column(){
@@ -29,9 +28,9 @@ void Column::set_type(dbvar type_){
         case dbv_TIMESTAMP:
             aggs = new ColAggs<unsigned int>;
             break;
-        case dbv_VARCHAR:
+        /* case dbv_VARCHAR:
             throw "not implemented!";
-            break;
+            break; */
     }
 }
 
@@ -52,7 +51,7 @@ void Column::aggregate(void* val){
 Schema::Schema(const std::vector<std::pair<dbvar, std::string>>& fields_type_and_name)
     : field_cnt(fields_type_and_name.size()){
 
-    columns = new Column[field_cnt];
+    Column* columns = new Column[field_cnt];
     for(unsigned short i=0; i<field_cnt; i++){
         field_name_to_index[fields_type_and_name[i].second] = i;
         columns[i].set_type(fields_type_and_name[i].first);
@@ -70,5 +69,4 @@ void Schema::create_std_index_file(const std::string& filename) const{
     for(unsigned int i=0; i<line_cnt; i++){
         writer.write(i);
     }
-
 }

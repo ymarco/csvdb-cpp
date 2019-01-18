@@ -50,6 +50,7 @@ Command* Parser::Parse(){
     std::string cmd = _curr_token.second;
     if(cmd == "create")     return _parse_create();
     if(cmd == "drop")       return _parse_drop();
+    if(cmd == "load")       return _parse_load();
     // if(cmd = ...) ...
     Command* nullcmd = new Command;
     return nullcmd;
@@ -85,9 +86,9 @@ Command* Parser::_parse_create(){
             __tkzr.throw_err("parse error: insecondid database type");
         }
         dbvar arg_type = utils::name2dbvar(_curr_token.second);
-        std::cout << "type generated: " << (int)arg_type << "\n";
+        //std::cout << "type generated: " << (int)arg_type << "\n";
         args_vec_ptr->emplace_back(arg_type, arg_name);
-        std::cout << "  getting oper\n";
+        //std::cout << "  getting oper\n";
         _expect_next_token(t_OPERATOR);
         if(_curr_token.second == ","){ // more arguments
             continue;
@@ -130,20 +131,25 @@ Command* Parser::_parse_load(){
     std::string src;
     std::string dst;
     unsigned int ignore_lines = 0;
-
+    std::cout << "parsing load\n";
     _expect_next_token({t_KEYWORD, "data"});
     _expect_next_token({t_KEYWORD, "infile"});
-    _expect_next_token(t_IDENTIFIER);
+    _expect_next_token(t_LIT_STR);
     src = _curr_token.second;
+    std::cout << "src: \"" << src << "\"\n";
     _expect_next_token({t_KEYWORD, "into"});
     _expect_next_token({t_KEYWORD, "table"});
-    _proceed_token();
+    _expect_next_token(t_IDENTIFIER);
+    dst = _curr_token.second;
+    std::cout << "dst: \"" << dst << "\"\n";
     if(_curr_token.first != t_EOF){
         _expect_next_token({t_KEYWORD, "ignore"});
         _expect_next_token(t_LIT_NUM);
         // convert str number to binary int, e.g "123" to 123
         std::stringstream tmp(_curr_token.second);
         tmp >> ignore_lines;
+        std::cout << "ignore lines: " << ignore_lines << "\n";
+
     }else if(_curr_token.first != t_EOF){
         __tkzr.throw_err("unexpected token");
     }

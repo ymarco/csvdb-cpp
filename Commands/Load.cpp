@@ -4,84 +4,73 @@
 Load::Load(std::string src, std::string dst, unsigned int ignore_lines = 0)
     : _src(src), _dst(dst), _ignore_lines(ignore_lines){}
 
-std::vector<std::string> Load::split(std::string txt)
-{
-	std::vector<std::string> splited;
-	std::string correct_place = "";
 
-	for (int i = 0; i < (int)txt.length(); i++)
-	{
-		if (txt.at(i) == ',')
-		{
-			splited.push_back(correct_place);
-			correct_place = "";
-		}
-		else
-			correct_place += txt.at(i);
+void Load::_split(const std::string& txt_line, std::string* splitted){
+	std::string field_buffer = "";
+	unsigned short curr_field_num = 0;
+	for (unsigned short i = 0; i < txt_line.length(); i++){
+		if (txt_line.at(i) == ','){
+			splitted[curr_field_num] = field_buffer;
+			field_buffer = "";
+			curr_field_num++;
+		}else
+			field_buffer += txt_line.at(i);
 	}
-	splited.push_back(correct_place);
-
-	return splited;
+	splitted[curr_field_num] = field_buffer;
 }
 
-void Load::execute()
-{
-	Schema schema = g_table_name_to_schema[_dst];
-	std::ifstream file(_src);
+void Load::execute(){
+	Schema* schema = &g_table_name_to_schema.at(_dst);
+	unsigned short field_cnt = schema->field_cnt;
+	Column* columns = schema->columns;
+	std::ifstream src_csv(_src);
 
 	std::string line;
-
+	// skipping the lines that are spposed to be ignored
 	for (size_t i = 0; i < _ignore_lines; i++)
-		std::getline(file, line);
-
-	//std::getline(file, line);
-
-	//std::vector<std::string> places = split(line);
+		std::getline(src_csv, line);
 
 	std::vector<std::ofstream> out_files;
-
-	//out_files.resize(places.size());
-	out_files.resize(schema.field_cnt);
-
-	
-
-	for (size_t i = 0; i < out_files.size(); i++)
-	{
-		dbvar ct = schema.columns[i].type;
+	out_files.resize(field_cnt);
+	//out_files.shrink_to_fit();
+	// creating and opening all the files
+	for (size_t i = 0; i < field_cnt; i++){
+		dbvar ct = columns[i].type;
 		if (ct == dbv_VARCHAR)
 			out_files[i].open(_dst + "/" + std::to_string(i), std::ios_base::app);
 		else
 			out_files[i].open(_dst + "/" + std::to_string(i), std::ios::binary);
 	}
 
-	unsigned int line_cnt = 0;
-	while (std::getline(file, line))
-	{
-		std::vector<std::string> vector_line = split(line);
-		for (size_t i = 0; i < (vector_line.size()); i++)
-		{
-			dbvar ct = schema.columns[i].type;
-			out_files[i] << vector_line[i];
+	unsigned int& line_cnt = schema->line_cnt;
+	std::string splitted[field_cnt+1];
+	while (std::getline(src_csv, line)){
+		line_cnt++;
+		_split(line, splitted);
+		for (unsigned short i = 0; i < field_cnt; i++){
+			dbvar ct = columns[i].type;
+			//out_files[i] << splitted[i];
 			
 			switch(ct){
-			case dbv_INT:
-				int value = std::stoi(vector_line[i]);
-				out_files[i].write((char*)(&value), sizeof(int));
-				break;
-			case dbv_FLOAT:	
-				float value = std::stof(vector_line[i]);
-				out_files[i].write((char*)(&value), sizeof(float));
-				break;
-			default:
-				out_files[i] << vector_line[i] << "\n";
-				break;
+				case dbv_INT:{
+					int value = std::stoi(splitted[i]);
+					out_files[i].write(reinterpret_cast<char*>(&value), sizeof(int));
+					break;
+				}
+				case dbv_FLOAT:{
+					float value = std::stof(splitted[i]);
+					out_files[i].write(reinterpret_cast<char*>(&value), sizeof(float));
+					break;
+				}
+				default:{
+					out_files[i] << splitted[i] << "\n";
+					break;
+				}
+			}
 		}
-		line_cnt++;
 	}
 
-	schema.line_cnt = line_cnt;
-
-	file.close();
+	src_csv.close();
 	for (size_t i = 0; i < out_files.size(); i++)
 		out_files[i].close();
 }
