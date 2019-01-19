@@ -1,0 +1,1 @@
+{"schema":[{"field":"title","type":"varchar"},{"field":"year","type":"int"},{"field":"duration","type":"int"},{"field":"rating","type":"float"}]}

@@ -1,5 +1,6 @@
 #include "Load.h"
 #include "../utils.h"
+#include <iostream>
 
 Load::Load(std::string src, std::string dst, unsigned int ignore_lines = 0)
     : _src(src), _dst(dst), _ignore_lines(ignore_lines){}
@@ -10,6 +11,7 @@ void Load::_split(const std::string& txt_line, std::string* splitted){
 	unsigned short curr_field_num = 0;
 	for (unsigned short i = 0; i < txt_line.length(); i++){
 		if (txt_line.at(i) == ','){
+			std::cout << "split: reading field #" << curr_field_num << "\n";
 			splitted[curr_field_num] = field_buffer;
 			field_buffer = "";
 			curr_field_num++;
@@ -20,9 +22,9 @@ void Load::_split(const std::string& txt_line, std::string* splitted){
 }
 
 void Load::execute(){
-	Schema* schema = &g_table_name_to_schema.at(_dst);
-	unsigned short field_cnt = schema->field_cnt;
-	Column* columns = schema->columns;
+	Schema* schema = g_schema_name_to_ptr.at(_dst);
+	const unsigned short field_cnt = schema->field_cnt;
+	Column* const columns = schema->columns;
 	std::ifstream src_csv(_src);
 
 	std::string line;
@@ -35,32 +37,36 @@ void Load::execute(){
 	//out_files.shrink_to_fit();
 	// creating and opening all the files
 	for (size_t i = 0; i < field_cnt; i++){
-		dbvar ct = columns[i].type;
-		if (ct == dbv_VARCHAR)
+		std::cout << "opening file for column #" << i << "\n";
+		if (columns[i].type == dbv_VARCHAR)
 			out_files[i].open(_dst + "/" + std::to_string(i), std::ios_base::app);
 		else
 			out_files[i].open(_dst + "/" + std::to_string(i), std::ios::binary);
 	}
 
 	unsigned int& line_cnt = schema->line_cnt;
-	std::string splitted[field_cnt+1];
+	std::string splitted[field_cnt];
 	while (std::getline(src_csv, line)){
 		line_cnt++;
 		_split(line, splitted);
 		for (unsigned short i = 0; i < field_cnt; i++){
 			dbvar ct = columns[i].type;
-			//out_files[i] << splitted[i];
+			std::cout << "processing: \"" << splitted[i] <<"\"\n";
 			
 			switch(ct){
 				case dbv_INT:{
-					int value = std::stoi(splitted[i]);
-					out_files[i].write(reinterpret_cast<char*>(&value), sizeof(int));
+					int val = std::stoi(splitted[i]);
+					out_files[i].write(reinterpret_cast<char*>(&val), sizeof(int));
 					break;
 				}
 				case dbv_FLOAT:{
-					float value = std::stof(splitted[i]);
-					out_files[i].write(reinterpret_cast<char*>(&value), sizeof(float));
+					float val = std::stof(splitted[i]);
+					out_files[i].write(reinterpret_cast<char*>(&val), sizeof(float));
 					break;
+				}
+				case dbv_TIMESTAMP:{
+					long long val = std::stoull(splitted[i]);
+					out_files[i].write(reinterpret_cast<char*>(&val), sizeof(long long));
 				}
 				default:{
 					out_files[i] << splitted[i] << "\n";

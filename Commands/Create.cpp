@@ -5,8 +5,6 @@
 #include "../utils.h"
 
 
-
-
 Create::Create(const std::string& name,
     bool enable_ifnexists, 
     std::shared_ptr<std::vector<std::pair<dbvar, std::string>>> args)
@@ -14,7 +12,7 @@ Create::Create(const std::string& name,
 
 void Create::execute(){
     // create directory _name
-    if(g_table_name_to_schema.find(_name) != g_table_name_to_schema.end()){ // existing table
+    if(g_schema_name_to_ptr.find(_name) != g_schema_name_to_ptr.end()){ // existing table
         if(_enable_ifnexists){
             return;
         }else{
@@ -26,7 +24,11 @@ void Create::execute(){
     filesys::create_directory(path);
     _create_json();
     // AND THE MOST IMPORTANT THING:
-    g_table_name_to_schema.insert({_name, Schema(*_args)});
+    Schema* s = new Schema(*_args);
+    TEST(auto y = s->columns[0]);
+    g_schema_name_to_ptr.insert({_name, s});   
+    TEST(auto x = g_schema_name_to_ptr.at(_name)->columns[0].type;);
+
 }
 
 
@@ -41,7 +43,7 @@ void Create::_create_json(){
     }
     const std::string path = _name + "/table.json";
     std::ofstream file(path.c_str());
-    std::cout << "got json alright";
+    std::cout << "got json alright\n";
     if(!file.is_open()){
         throw "error in opening table.json file";
     }   

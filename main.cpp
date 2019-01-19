@@ -9,7 +9,7 @@
 #include "Commands/Command.h"
 #include "Schema.h"
 
-std::unordered_map<std::string, Schema> g_table_name_to_schema;
+std::unordered_map<std::string, Schema*> g_schema_name_to_ptr;
 
 
 int main(){

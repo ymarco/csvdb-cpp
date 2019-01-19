@@ -1,5 +1,6 @@
 #include "Schema.h"
 #include "FileWriteBuffer.h"
+#include <iostream>
 
 Column::~Column(){
     switch(type){
@@ -51,16 +52,17 @@ void Column::aggregate(void* val){
 Schema::Schema(const std::vector<std::pair<dbvar, std::string>>& fields_type_and_name)
     : field_cnt(fields_type_and_name.size()){
 
-    Column* columns = new Column[field_cnt];
+    std::cout << "CONSTRUCTING SCHEMA\n";
+    columns = new Column[field_cnt];
     for(unsigned short i=0; i<field_cnt; i++){
         field_name_to_index[fields_type_and_name[i].second] = i;
         columns[i].set_type(fields_type_and_name[i].first);
     }
-
+    TEST(auto x = columns[0].type;);
 }
 
 Schema::~Schema(){
-    delete[] columns;
+    TEST(delete[] columns;)
 }
 
 
