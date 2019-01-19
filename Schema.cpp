@@ -22,20 +22,24 @@ void Column::set_type(dbvar type_){
     switch(type){
         case dbv_INT:
             aggs = new ColAggs<int>;
+            aggregate = [=](void* val){ ((ColAggs<int>*)(aggs))->aggregate(*((int*)val)); };
             break;
         case dbv_FLOAT:
             aggs = new ColAggs<float>;
+            aggregate = [=](void* val){ ((ColAggs<float>*)(aggs))->aggregate(*((float*)val)); };
             break;
         case dbv_TIMESTAMP:
             aggs = new ColAggs<unsigned int>;
+            aggregate = [=](void* val){ ((ColAggs<unsigned int>*)(aggs))->aggregate(*((unsigned int*)val)); };
             break;
+        
         /* case dbv_VARCHAR:
             throw "not implemented!";
             break; */
     }
 }
 
-void Column::aggregate(void* val){
+/* void Column::aggregate(void* val){
     switch(type){
         case dbv_INT:
             ((ColAggs<int>*)aggs)->aggregate((*(int*)val));
@@ -48,7 +52,7 @@ void Column::aggregate(void* val){
             break;
     }
 }
-
+ */
 Schema::Schema(const std::vector<std::pair<dbvar, std::string>>& fields_type_and_name)
     : field_cnt(fields_type_and_name.size()){
 

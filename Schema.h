@@ -4,6 +4,7 @@
 #include <unordered_map>
 #include <vector>
 #include <string>
+#include <functional>
 #include "utils.h"
 #include "Commands/Select/agg.h"
 
@@ -23,7 +24,8 @@ public:
     std::string name;
     dbvar type;
     void* aggs;
-    void aggregate(void* val);
+    std::function<void(void*)> aggregate;
+    //void aggregate(void* val);
     ~Column();
 };
 

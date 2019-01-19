@@ -56,19 +56,22 @@ void Load::execute(){
 			switch(ct){
 				case dbv_INT:{
 					int val = std::stoi(splitted[i]);
+					columns[i].aggregate(&val);
 					out_files[i].write(reinterpret_cast<char*>(&val), sizeof(int));
 					break;
 				}
 				case dbv_FLOAT:{
 					float val = std::stof(splitted[i]);
+					columns[i].aggregate(&val);
 					out_files[i].write(reinterpret_cast<char*>(&val), sizeof(float));
 					break;
 				}
 				case dbv_TIMESTAMP:{
 					long long val = std::stoull(splitted[i]);
+					columns[i].aggregate(&val);
 					out_files[i].write(reinterpret_cast<char*>(&val), sizeof(long long));
 				}
-				default:{
+				default:/* varchar */{
 					out_files[i] << splitted[i] << "\n";
 					break;
 				}
