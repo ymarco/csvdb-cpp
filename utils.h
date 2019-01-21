@@ -1,16 +1,28 @@
 #ifndef UTILS_H
 #define UTILS_H
 
+
+#include <iostream>
 // A set of functions and constants that dont belong to a specific class
 
-// t_ for tokenizer
-//dbv_ for database variable 
 enum dbvar: char{
     dbv_INT,
     dbv_FLOAT,
     dbv_VARCHAR,
     dbv_TIMESTAMP
 };
+
+#define DEBUG
+
+#ifdef DEBUG
+    #define TEST(x)\
+        std::cout << "TEST: Func " << __func__ << ", file " << __FILE__\
+        << ", line " << __LINE__ <<": " << std::flush;\
+        x;\
+        std::cout << "seccessful.\n";
+#else
+    #define TEST(x) x;
+#endif
 
 #include <string>
 

@@ -11,7 +11,7 @@
 #include "../filesys.h"
 #include "../utils.h"
 
-extern std::unordered_map<std::string, Schema> g_table_name_to_schema;
+extern std::unordered_map<std::string, Schema*> g_schema_name_to_ptr;
 
 class Create: public Command{
 private:

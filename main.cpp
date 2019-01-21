@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <unordered_map>
+#include <memory>
 
 #include "Tokenizer.h"
 #include "Parser.h"
@@ -8,17 +9,12 @@
 #include "Commands/Command.h"
 #include "Schema.h"
 
-std::unordered_map<std::string, Schema> g_table_name_to_schema;
+std::unordered_map<std::string, Schema*> g_schema_name_to_ptr;
 
 
 int main(){
-    /*
-    std::string name("movies");
-    std::pair<char,std::string> args[] = {{1, "id"}, {3, "title"}};
-    Create create(name, true, args, 2);
-    //create.execute();
-    */
-    
+       
+
     std::string cmd;
     while(1){
         cmd = input::get_terminal_cmd();

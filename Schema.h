@@ -4,6 +4,7 @@
 #include <unordered_map>
 #include <vector>
 #include <string>
+#include <functional>
 #include "utils.h"
 #include "Commands/Select/agg.h"
 
@@ -23,8 +24,8 @@ public:
     std::string name;
     dbvar type;
     void* aggs;
-    void aggregate(void* val);
-    char get_type();
+    std::function<void(void*)> aggregate;
+    //void aggregate(void* val);
     ~Column();
 };
 
@@ -32,14 +33,12 @@ class Schema{
 private:
     void create_std_index_file(const std::string& filename) const;
 public:
-    Schema(const std::vector<std::pair<dbvar, std::string>>& field_names_and_types // array of (type, name)
-    );
+    Schema(const std::vector<std::pair<dbvar, std::string>>& field_names_and_types /* array of (type, name) */);
     ~Schema();
     const unsigned short field_cnt;
     unsigned int line_cnt;
     Column* columns = nullptr; // array allocated on heap of Column objs
     std::unordered_map<std::string, unsigned short> field_name_to_index;
-
 };
 
 
