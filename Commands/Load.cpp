@@ -72,8 +72,14 @@ void Load::execute()
 				float value = std::stof(vector_line[i]);
 				out_files[i].write((char*)(&value), sizeof(float));
 			}
-			else
+			else if (ct == 3)
 				out_files[i] << vector_line[i] << "\n";
+			else if (ct == 4)
+			{
+				
+				unsigned long value = std::stoul(vector_line[i]);
+				out_files[i].write((char*)(&value), sizeof(int));
+			}
 		}
 		line_cnt++;
 	}
