@@ -19,14 +19,17 @@ void Create::execute(){
             throw /* CmdError */ "you tried to create an existing table without the ifnexists flag";
         }
     }
-    
+
     filesys::path path(_name);
     filesys::create_directory(path);
     _create_json();
     // AND THE MOST IMPORTANT THING:
     Schema* s = new Schema(*_args);
+    std::cout << "create line 28" << std::endl;
     TEST(auto y = s->columns[0]);
+    std::cout << "create line 30" << std::endl;
     g_schema_name_to_ptr.insert({_name, s});   
+    std::cout << "create line 32" << std::endl;
     TEST(auto x = g_schema_name_to_ptr.at(_name)->columns[0].type;);
 
 }

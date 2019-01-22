@@ -21,19 +21,23 @@ public:
 class Column{
 public:
     void set_type(dbvar type_);
-    std::string name;
     dbvar type;
-    void* aggs;
-    std::function<void(void*)> aggregate;
+    union{
+        ColAggs<int32_t> i;
+        ColAggs<float> f;
+        ColAggs<uint32_t> ts;
+    } aggs = {ColAggs<int32_t>()};
+    std::function<void(void*)> aggregate = [](void*){std::cout << "ERROR: column aggregate function not initialized\n";};
     //void aggregate(void* val);
-    ~Column();
 };
 
 class Schema{
 private:
+    friend void load_to_file(std::istream& file, const Schema& schema);
     void create_std_index_file(const std::string& filename) const;
 public:
     Schema(const std::vector<std::pair<dbvar, std::string>>& field_names_and_types /* array of (type, name) */);
+    Schema(const unsigned short field_cnt_, unsigned int line_cnt_, Column* columns_);
     ~Schema();
     const unsigned short field_cnt;
     unsigned int line_cnt;
@@ -41,6 +45,8 @@ public:
     std::unordered_map<std::string, unsigned short> field_name_to_index;
 };
 
+Schema* load_from_file(std::istream& file);
+void load_to_file(std::ostream& file, const Schema& schema);
 
 
 
