@@ -18,6 +18,7 @@ int main(){
     std::string cmd;
     while(1){
         cmd = input::get_terminal_cmd();
+        if(cmd == "exit") break;
         Tokenizer tkzr(cmd);
         try{
             Parser parser(tkzr); // creating parser
@@ -27,8 +28,9 @@ int main(){
             delete cmd;  
             
         }catch(ParseError &e){
-            std::cout << "error cought\n";
-            std::cout << e.what();
+            std::cout << "Parsing error caught:\n" << e.what() << std::endl;
+        }catch(CmdError &e){
+            std::cout << "Command error caught:\n" << e.what() << std::endl;
         }
         
     }

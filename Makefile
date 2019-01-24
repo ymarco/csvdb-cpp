@@ -1,5 +1,5 @@
 objects = Create.o Drop.o main.o Tokenizer.o Parser.o input.o utils.o \
-		  Schema.o Load.o
+		  Schema.o Load.o Command.o
 CPPFLAGS = -std=c++17 -lstdc++fs -g
 
 
@@ -18,9 +18,10 @@ Parser.o: Parser.h  Tokenizer.o Commands/Command.o
 
 input.o: input.h 
 
-Command.o: Commands/Command.h
+Command.o: Commands/Command.h Commands/Command.cpp
+	g++ $(CPPFLAGS) -c Commands/Command.cpp
 
-Create.o: Commands/Create.h Commands/Create.cpp Commands/Command.h filesys.h
+Create.o: Commands/Create.h Commands/Create.cpp Commands/Command.o filesys.h
 	g++ $(CPPFLAGS) -c Commands/Create.cpp
 
 Drop.o: Commands/Drop.h Commands/Drop.cpp Commands/Command.h filesys.h

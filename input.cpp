@@ -12,7 +12,9 @@ std::string input::get_terminal_cmd(){
 
         if(line == ";"){
             return res;
-        }
+        }else if(line == "exit" || line == "exit()"){
+			return "exit";
+		}
         res += line;
         res += "\n";
         std::cout << "       ";  
