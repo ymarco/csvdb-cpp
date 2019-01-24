@@ -16,7 +16,7 @@ void Create::execute(){
         if(_enable_ifnexists){
             return;
         }else{
-            throw /* CmdError */ "you tried to create an existing table without the ifnexists flag";
+            throw CmdError("you tried to create an existing table without the ifnexists flag");
         }
     }
 
@@ -47,8 +47,5 @@ void Create::_create_json(){
     const std::string path = _name + "/table.json";
     std::ofstream file(path.c_str());
     std::cout << "got json alright\n";
-    if(!file.is_open()){
-        throw "error in opening table.json file";
-    }   
     file << j_schema;
 };

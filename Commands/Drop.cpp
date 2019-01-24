@@ -10,7 +10,7 @@ void Drop::execute(){
 		delete s;
 		g_schema_name_to_ptr.erase(_name);
 	}else{
-		throw /* CmdError(...) */ "you tried to drop a non-existing table without the ifexists flag.";
+		throw CmdError("you tried to drop a non-existing table without the ifexists flag.");
 	}
 
 }
