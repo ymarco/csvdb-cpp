@@ -13,7 +13,7 @@ std::unordered_map<std::string, Schema*> g_schema_name_to_ptr;
 
 
 int main(){
-       
+
 
     std::string cmd;
     while(1){
@@ -25,13 +25,13 @@ int main(){
             Command* cmd = parser.Parse(); // parsing
             std::cout<<"executing!\n";
             cmd->execute();
-            delete cmd;  
-            
+            delete cmd;
+
         }catch(ParseError &e){
             std::cout << "Parsing error caught:\n" << e.what() << std::endl;
         }catch(CmdError &e){
             std::cout << "Command error caught:\n" << e.what() << std::endl;
         }
-        
+
     }
 }

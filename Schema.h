@@ -23,11 +23,12 @@ public:
     void set_type(dbvar type_);
     dbvar type;
     union{
-        ColAggs<int32_t> i;
-        ColAggs<float> f;
-        ColAggs<uint32_t> ts;
-    } aggs = {ColAggs<int32_t>()};
-    std::function<void(void*)> aggregate = [](void*){std::cout << "ERROR: column aggregate function not initialized\n";};
+        ColAggs<int64_t> i;
+        ColAggs<double> f;
+        ColAggs<uint64_t> t;
+    } aggs = {ColAggs<int64_t>()};
+    std::function<void(dbv)> aggregate = [](dbv){std::cerr << "ERROR: column aggregate function not initialized\n";};
+    inline ~Column(){std::cout << "deleting column with type"<<utils::dbvcode2name(type) << std::endl;}
     //void aggregate(void* val);
 };
 

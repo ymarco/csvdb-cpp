@@ -1,34 +1,42 @@
 objects = Create.o Drop.o main.o Tokenizer.o Parser.o input.o utils.o \
 		  Schema.o Load.o Command.o
-CPPFLAGS = -std=c++17 -lstdc++fs -g
-
+CC = g++-8
+CPPFLAGS = -std=c++17 -g
+LDFLAGS = -lstdc++fs
 
 mydb.out: $(objects)
-	g++ $(objects) -o mydb.out $(CPPFLAGS)
+	$(CC) $(CPPFLAGS) $(objects) -o $@ $(LDFLAGS)
 
-main.o:  Parser.h Tokenizer.h
+main.o:  main.cpp Parser.h Tokenizer.h
+	$(CC) $(CPPFLAGS) -c $< -o $@ $(LDFLAGS)
 
-Schema.o: Schema.h FileWriteBuffer.h
+Schema.o:  Schema.cpp Schema.h
+	$(CC) $(CPPFLAGS) -c $< -o $@ $(LDFLAGS)
 
-Tokenizer.o: Tokenizer.h utils.h
+Tokenizer.o:  Tokenizer.cpp Tokenizer.h
+	$(CC) $(CPPFLAGS) -c $< -o $@ $(LDFLAGS)
 
-utils.o:  utils.h
+Parser.o:  Parser.cpp Parser.h Tokenizer.o
+	$(CC) $(CPPFLAGS) -c $< -o $@ $(LDFLAGS)
 
-Parser.o: Parser.h  Tokenizer.o Commands/Command.o
+input.o:  input.cpp input.h
+	$(CC) $(CPPFLAGS) -c $< -o $@ $(LDFLAGS)
 
-input.o: input.h 
+Command.o:  Commands/Command.cpp Commands/Command.h
+	$(CC) $(CPPFLAGS) -c $< -o $@ $(LDFLAGS)
 
-Command.o: Commands/Command.h Commands/Command.cpp
-	g++ $(CPPFLAGS) -c Commands/Command.cpp
+Create.o:  Commands/Create.cpp Commands/Create.h
+	$(CC) $(CPPFLAGS) -c $< -o $@ $(LDFLAGS)
 
-Create.o: Commands/Create.h Commands/Create.cpp Commands/Command.o filesys.h
-	g++ $(CPPFLAGS) -c Commands/Create.cpp
+Drop.o:  Commands/Drop.cpp Commands/Drop.h
+	$(CC) $(CPPFLAGS) -c $< -o $@ $(LDFLAGS)
 
-Drop.o: Commands/Drop.h Commands/Drop.cpp Commands/Command.h filesys.h
-	g++ $(CPPFLAGS) -c Commands/Drop.cpp
+Load.o:  Commands/Load.cpp Commands/Load.h
+	$(CC) $(CPPFLAGS) -c $< -o $@ $(LDFLAGS)
 
-Load.o: Commands/Load.h Commands/Load.cpp
-	g++ $(CPPFLAGS) -c Commands/Load.cpp
+utils.o:  utils.cpp utils.h
+	$(CC) $(CPPFLAGS) -c $< -o $@ $(LDFLAGS)
+
 
 clean:
 	rm *.o

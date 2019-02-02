@@ -21,7 +21,7 @@ std::string input::get_terminal_cmd(){
     }
 }
 
-std::vector<std::string> input::get_file_cmd(std::string file_path)
+std::vector<std::string> input::get_file_cmd(const std::string& file_path)
 {
 	std::vector<std::string> res;
 	std::ifstream file;
@@ -30,22 +30,18 @@ std::vector<std::string> input::get_file_cmd(std::string file_path)
 	text.assign((std::istreambuf_iterator<char>(file)), (std::istreambuf_iterator<char>()));
 	std::string command;
 	bool comment_mod = false;
-	for (size_t i = 0; i < text.size(); i++)
-	{
-		if (text[i] == '\n')
-		{
+	for (size_t i = 0; i < text.size(); i++){
+		if (text[i] == '\n'){
 			comment_mod = false;
 			continue;
 		}
 		if (comment_mod)
 			continue;
-		if (text[i] == '-' && text[i + 1] == '-')
-		{
+		if (text[i] == '-' && text[i + 1] == '-'){
 			comment_mod = true;
 			continue;
 		}
-		if (text[i] == ';')
-		{
+		if (text[i] == ';'){
 			res.push_back(command);
 			command = "";
 			continue;

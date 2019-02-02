@@ -1,7 +1,7 @@
 #ifndef UTILS_H
 #define UTILS_H
 
-
+#include <limits>
 #include <iostream>
 // A set of functions and constants that dont belong to a specific class
 
@@ -11,6 +11,14 @@ enum dbvar: char{
     dbv_VARCHAR,
     dbv_TIMESTAMP
 };
+union dbv{
+    int64_t i;
+    double f;
+    uint64_t t;
+};
+const int64_t null_int = std::numeric_limits<int64_t>::min();
+const double null_float = -0.0;
+const uint64_t null_timestamp = std::numeric_limits<uint64_t>::min(); 
 
 #define DEBUG
 

@@ -5,21 +5,22 @@
 
 void Column::set_type(dbvar type_){
     type = type_;
+    std::cout << "setting type " << utils::dbvcode2name << std::endl;
     switch(type){
         case dbv_INT:
-            new(&aggs.i) ColAggs<int32_t>;
-            aggregate = [this](void* val){ this->aggs.i.aggregate(*((int32_t*)val)); };
+            new(&aggs.i) ColAggs<int64_t>;
+            aggregate = [this](dbv val){ this->aggs.i.aggregate(val.i); };
             break;
         case dbv_FLOAT:
-            new(&aggs.f) ColAggs<float>;
-            aggregate = [this](void* val){ this->aggs.f.aggregate(*((float*)val)); };
+            new(&aggs.f) ColAggs<double>;
+            aggregate = [this](dbv val){ this->aggs.f.aggregate(val.f); };
             break;
         case dbv_TIMESTAMP:
-            new(&aggs.ts) ColAggs<uint32_t>;
-            aggregate = [this](void* val){ this->aggs.ts.aggregate(*((uint32_t*)val)); };
+            new(&aggs.t) ColAggs<uint64_t>;
+            aggregate = [this](dbv val){ this->aggs.t.aggregate(val.t); };
             break;
         case dbv_VARCHAR:
-            aggregate = [](void* val){};
+            aggregate = [](dbv val){};
             break;
     }
 }
@@ -54,6 +55,7 @@ Schema::Schema(const unsigned short field_cnt_, unsigned int line_cnt_, Column* 
     :field_cnt(field_cnt_), line_cnt(line_cnt_), columns(columns_){};
 
 Schema::~Schema(){
+    std::cout << "deleting schema\n";
     TEST(delete[] columns;)
 }
 
@@ -84,5 +86,5 @@ void load_to_file(std::ostream& file, const Schema& schema){
         const unsigned int line_cnt;
     } info({schema.field_cnt, schema.line_cnt}); // needed because rein_cast cant take constants
     file.write(reinterpret_cast<char*>(&info), sizeof(info));
-    file.write(reinterpret_cast<char*>(schema.columns), sizeof(Column) * schema.field_cnt); 
+    file.write(reinterpret_cast<char*>(schema.columns), sizeof(Column) * schema.field_cnt);
 }

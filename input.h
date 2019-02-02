@@ -8,6 +8,6 @@
 
 namespace input{
     std::string get_terminal_cmd();
-	std::vector<std::string> get_file_cmd(std::string file_path);
+	std::vector<std::string> get_file_cmd(const std::string& file_path);
 }
 #endif
